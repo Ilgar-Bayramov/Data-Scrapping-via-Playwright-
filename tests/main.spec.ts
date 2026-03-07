@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 
 
 
-test('test 2', async ({ page }) => {
+test('test', async ({ page }) => {
 
   test.setTimeout(0); // it is turning off timeout. Therefore if loading is late it is waiting.
 
@@ -77,3 +77,4 @@ test('test 2', async ({ page }) => {
   console.log('Process finished succesfully.');
 
 });
+
