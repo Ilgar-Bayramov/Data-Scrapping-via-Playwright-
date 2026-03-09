@@ -3,13 +3,45 @@ import { card_reader } from '../helper/helper';
 import fs from 'fs/promises';
 
 
-
-test('test', async ({ page }) => {
+test('main', async ({  }) => {
+    test.setTimeout(0);
+  const browser = await chromium.launch({ headless: false });
+  const context = await browser.newContext();
+  const page = await context.newPage();
 
   test.setTimeout(0); // it is turning off timeout. Therefore if loading is late it is waiting.
 
   await page.goto('https://turbo.az/');        // go to page
-  await page.getByRole('link', { name: 'Bütün elanlar' }).click();   // click for all ads
+  
+
+// waiting up to user do filter or click for all ads or motos.
+  
+await page.evaluate(() => {
+  return new Promise<void>((resolve) => {
+    const candidates = [
+      ...document.querySelectorAll('button'),
+      ...document.querySelectorAll('a')
+    ];
+
+    // texts of buttons
+    const texts = ['Elanları göstər', 'Bütün elanlar', 'Moto'];
+
+    // click event
+    const onClick = () => resolve();
+
+    candidates.forEach(el => {
+      if (texts.includes(el.textContent?.trim() || '')) {
+        el.addEventListener('click', onClick, { once: true });
+      }
+    });
+  });
+});
+
+console.log("Process starting...");
+
+
+
+
 
   const PreData = [];     // array to write all data
   
@@ -25,8 +57,9 @@ test('test', async ({ page }) => {
       await page.waitForTimeout(2000);    // because of network, loading is late often
 
       if (await nextPage.isVisible()){
+        
+        await nextPage.click(); 
         console.log('visible: ', page_queue);
-        await nextPage.click();
 
         // SCRAP START
         for (let i = 0; i < 24; i++){
@@ -48,7 +81,7 @@ test('test', async ({ page }) => {
 
         page_queue = page_queue + 1;  // next page number
         nextPage = paginationArea.filter({ hasText: `${page_queue}` });  // next page
-         
+        // click burdan goturulmelidir eger novbeti sehife yoxdursa hara klik etsin
     }
     else{
     
@@ -77,6 +110,9 @@ test('test', async ({ page }) => {
 
   console.log('Process finished succesfully.');
 
+
+   
+  await page.pause();
+  await context.close();
+  await browser.close();
 });
-
-
