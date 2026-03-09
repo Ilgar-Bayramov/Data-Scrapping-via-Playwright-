@@ -26,6 +26,7 @@ test('test', async ({ page }) => {
 
       if (await nextPage.isVisible()){
         console.log('visible: ', page_queue);
+        await nextPage.click();
 
         // SCRAP START
         for (let i = 0; i < 24; i++){
@@ -47,7 +48,7 @@ test('test', async ({ page }) => {
 
         page_queue = page_queue + 1;  // next page number
         nextPage = paginationArea.filter({ hasText: `${page_queue}` });  // next page
-        await nextPage.click(); 
+         
     }
     else{
     
@@ -77,4 +78,5 @@ test('test', async ({ page }) => {
   console.log('Process finished succesfully.');
 
 });
+
 
